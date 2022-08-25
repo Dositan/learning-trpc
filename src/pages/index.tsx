@@ -24,8 +24,8 @@ const IndexPage: NextPageWithLayout = () => {
   if (!session) {
     return (
       <>
-        <h1>Not logged in</h1>
-        <button onClick={() => signIn()}>Click here</button>
+        <h1>Not Authorized</h1>
+        <button onClick={() => signIn()}>Sign In</button>
       </>
     );
   }
@@ -85,6 +85,11 @@ const IndexPage: NextPageWithLayout = () => {
         )}
       </form>
       <hr />
+      <Link href="/profile">
+        <a>
+          <button>View my posts</button>
+        </a>
+      </Link>
       {postsQuery.data?.map((item) => (
         <article key={item.id}>
           <h3>{item.title}</h3>

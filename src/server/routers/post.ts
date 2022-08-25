@@ -22,7 +22,6 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
 });
 
 export const postRouter = createRouter()
-  // create
   .mutation('add', {
     input: z.object({
       id: z.string().uuid().optional(),
