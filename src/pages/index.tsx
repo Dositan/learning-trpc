@@ -42,17 +42,6 @@ const IndexPage: NextPageWithLayout = () => {
         Posts
         {postsQuery.status === 'loading' && '(loading)'}
       </h2>
-      {postsQuery.data?.map((item) => (
-        <article key={item.id}>
-          <h3>{item.title}</h3>
-          <Link href={`/post/${item.id}`}>
-            <a>View more</a>
-          </Link>
-        </article>
-      ))}
-
-      <hr />
-
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -95,6 +84,15 @@ const IndexPage: NextPageWithLayout = () => {
           <p style={{ color: 'red' }}>{addPost.error.message}</p>
         )}
       </form>
+      <hr />
+      {postsQuery.data?.map((item) => (
+        <article key={item.id}>
+          <h3>{item.title}</h3>
+          <Link href={`/post/${item.id}`}>
+            <a>View more</a>
+          </Link>
+        </article>
+      ))}
     </>
   );
 };

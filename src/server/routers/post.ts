@@ -37,7 +37,6 @@ export const postRouter = createRouter()
       return post;
     },
   })
-  // read
   .query('all', {
     async resolve() {
       /**
@@ -47,6 +46,9 @@ export const postRouter = createRouter()
 
       return prisma.post.findMany({
         select: defaultPostSelect,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
     },
   })
@@ -69,7 +71,6 @@ export const postRouter = createRouter()
       return post;
     },
   })
-  // update
   .mutation('edit', {
     input: z.object({
       id: z.string().uuid(),
@@ -88,7 +89,6 @@ export const postRouter = createRouter()
       return post;
     },
   })
-  // delete
   .mutation('delete', {
     input: z.object({
       id: z.string(),

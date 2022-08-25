@@ -4,8 +4,16 @@ import { NextPageWithLayout } from '~/pages/_app';
 import { trpc } from '~/utils/trpc';
 
 const PostViewPage: NextPageWithLayout = () => {
-  const id = useRouter().query.id as string;
+  const { query, push } = useRouter();
+  const id = query.id as string;
+  const utils = trpc.useContext();
   const postQuery = trpc.useQuery(['post.byId', { id }]);
+  const deletePost = trpc.useMutation('post.delete', {
+    async onSuccess() {
+      push('/');
+      await utils.invalidateQueries(['post.all']);
+    },
+  });
 
   if (postQuery.error) {
     return (
@@ -29,6 +37,8 @@ const PostViewPage: NextPageWithLayout = () => {
 
       <h2>Raw data:</h2>
       <pre>{JSON.stringify(data, null, 4)}</pre>
+
+      <button onClick={() => deletePost.mutate({ id })}>Delete Post</button>
     </>
   );
 };
