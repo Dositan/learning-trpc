@@ -1,8 +1,10 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import Link from 'next/link';
+import { signIn, useSession } from 'next-auth/react';
 
 const IndexPage: NextPageWithLayout = () => {
+  const { data: session } = useSession();
   const utils = trpc.useContext();
   const postsQuery = trpc.useQuery(['post.all']);
   const addPost = trpc.useMutation('post.add', {
@@ -19,9 +21,17 @@ const IndexPage: NextPageWithLayout = () => {
   //   }
   // }, [postsQuery.data, utils]);
 
+  if (!session) {
+    return (
+      <>
+        <h1>Not logged in</h1>
+        <button onClick={() => signIn()}>Click here</button>
+      </>
+    );
+  }
   return (
     <>
-      <h1>Welcome to your tRPC starter!</h1>
+      <h1>Welcome, {session.user?.name}!</h1>
       <p>
         Check <a href="https://trpc.io/docs">the docs</a> whenever you get
         stuck, or ping <a href="https://twitter.com/alexdotjs">@alexdotjs</a> on
