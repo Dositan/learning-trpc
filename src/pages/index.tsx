@@ -3,6 +3,7 @@ import { NextPageWithLayout } from './_app';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { Page } from '~/components/Page';
 
 const IndexPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
@@ -33,12 +34,10 @@ const IndexPage: NextPageWithLayout = () => {
     );
   }
   return (
-    <>
+    <Page title="Home">
       {/* Header */}
       <div className="text-center my-4">
-        <h1 className="text-4xl font-extrabold">
-          Welcome, {session.user?.name}!
-        </h1>
+        <h1 className="text-3xl font-bold">Welcome, {session.user?.name}!</h1>
         <p>
           template by{' '}
           <a className="text-teal-400" href="https://twitter.com/alexdotjs">
@@ -126,7 +125,7 @@ const IndexPage: NextPageWithLayout = () => {
           </Link>
         </article>
       ))}
-    </>
+    </Page>
   );
 };
 

@@ -1,6 +1,7 @@
 import { signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Page } from '~/components/Page';
 import { trpc } from '~/utils/trpc';
 import { NextPageWithLayout } from './_app';
 
@@ -22,7 +23,7 @@ const Profile: NextPageWithLayout = () => {
     );
   }
   return (
-    <>
+    <Page title="Profile">
       <div className="flex flex-col items-center justify-center">
         <Image
           className="rounded-full"
@@ -35,7 +36,7 @@ const Profile: NextPageWithLayout = () => {
         <h3 className="text-2xl">{data?.length} posts</h3>
       </div>
 
-      <div className="border">
+      <div className="my-4">
         <h1 className="text-4xl font-extrabold text-center">
           Your Posts{postsQuery.status === 'loading' && ' (loading)'}
         </h1>
@@ -48,7 +49,7 @@ const Profile: NextPageWithLayout = () => {
           </article>
         ))}
       </div>
-    </>
+    </Page>
   );
 };
 
