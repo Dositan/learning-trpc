@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { Page } from '~/components/Page';
 import SignIn from '~/components/SignIn';
+import { ACTION_BUTTON, CARD } from '~/styles';
 
 const IndexPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
@@ -44,13 +45,10 @@ const IndexPage: NextPageWithLayout = () => {
         </p>
       </div>
       {/* Add Post */}
-      <button
-        className="rounded-md px-4 py-2 text-white bg-teal-400 hover:bg-teal-500 hover:duration-500"
-        onClick={() => setAdding(!adding)}
-      >
+      <button className={ACTION_BUTTON} onClick={() => setAdding(!adding)}>
         Add Post
       </button>
-      <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-10 my-4">
+      <div className={`flex items-center justify-center my-4 ${CARD}`}>
         <form
           hidden={!adding}
           onSubmit={async (e) => {
@@ -95,7 +93,7 @@ const IndexPage: NextPageWithLayout = () => {
             <textarea id="text" name="text" disabled={addPost.isLoading} />
           </div>
           <button
-            className="rounded-md px-4 py-2 text-white bg-teal-400 hover:bg-teal-500 hover:duration-500"
+            className={ACTION_BUTTON}
             type="submit"
             disabled={addPost.isLoading}
           >

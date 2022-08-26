@@ -2,6 +2,7 @@ import NextError from 'next/error';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { NextPageWithLayout } from '~/pages/_app';
+import { ACTION_BUTTON, CARD, DELETE_BUTTON } from '~/styles';
 import { trpc } from '~/utils/trpc';
 
 const PostViewPage: NextPageWithLayout = () => {
@@ -49,19 +50,19 @@ const PostViewPage: NextPageWithLayout = () => {
         </p>
         <div className="flex gap-2 my-2">
           <button
+            className={ACTION_BUTTON}
             onClick={() => setRawShown(!rawShown)}
-            className="py-2 px-4 rounded-md text-gray-100 bg-teal-400 hover:bg-teal-500 duration-500"
           >
             JSON
           </button>
           <button
+            className={ACTION_BUTTON}
             onClick={() => setEditing(!editing)}
-            className="py-2 px-4 rounded-md text-gray-100 bg-teal-400 hover:bg-teal-500 duration-500"
           >
             Edit
           </button>
           <button
-            className="text-white rounded-md px-4 py-2 bg-red-400 hover:bg-red-500 hover:duration-500"
+            className={DELETE_BUTTON}
             onClick={() => deletePost.mutate({ id })}
           >
             Delete
@@ -71,7 +72,7 @@ const PostViewPage: NextPageWithLayout = () => {
 
       <p>{data.text}</p>
 
-      <div className="my-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-10">
+      <div className={`my-10 flex items-center justify-center ${CARD}`}>
         <form
           hidden={!editing}
           onSubmit={async (e) => {
@@ -139,10 +140,7 @@ const PostViewPage: NextPageWithLayout = () => {
         </form>
       </div>
 
-      <div
-        className="p-10 bg-gray-100 dark:bg-gray-800 rounded-xl"
-        hidden={!rawShown}
-      >
+      <div className={CARD} hidden={!rawShown}>
         <code>{JSON.stringify(data, null, 4)}</code>
       </div>
     </>
