@@ -5,7 +5,7 @@ import Link from 'next/link';
 const Navbar = () => {
   const { data: session } = useSession();
   return (
-    <nav className="flex items-center justify-between my-2 mx-4">
+    <nav className="flex items-center justify-between my-2 max-w-[60ch] px-4 mx-auto">
       <Link href="/">
         <a className="text-2xl font-semibold">qaldyr</a>
       </Link>
