@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import NextError from 'next/error';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -6,13 +7,25 @@ import { ACTION_BUTTON, CARD, DELETE_BUTTON } from '~/styles';
 import { trpc } from '~/utils/trpc';
 
 const PostViewPage: NextPageWithLayout = () => {
+  // Router
   const { query, push } = useRouter();
-  const [title, setTitle] = useState<string | undefined>('');
-  const [text, setText] = useState<string | undefined>('');
   const id = query.id as string;
+  // Session
+  const { data: session } = useSession();
+  // States
+  const [title, setTitle] = useState<string | undefined>('');
+  const [subtitle, setSubtitle] = useState<string | undefined>('');
+  const [text, setText] = useState<string | undefined>('');
+  const [editing, setEditing] = useState(false);
+  const [rawShown, setRawShown] = useState(false);
+  // tRPC
   const utils = trpc.useContext();
   const postQuery = trpc.useQuery(['post.byId', { id }]);
-  const editPost = trpc.useMutation('post.edit');
+  const editPost = trpc.useMutation('post.edit', {
+    async onSuccess() {
+      await utils.invalidateQueries(['post.byId', { id }]);
+    },
+  });
   const deletePost = trpc.useMutation('post.delete', {
     async onSuccess() {
       push('/');
@@ -21,14 +34,13 @@ const PostViewPage: NextPageWithLayout = () => {
   });
   const { data } = postQuery;
 
-  const [editing, setEditing] = useState(false);
-  const [rawShown, setRawShown] = useState(false);
-
   useEffect(() => {
     setTitle(data?.title);
+    setSubtitle(data?.subtitle);
     setText(data?.text);
   }, [data]);
 
+  // failed getting post
   if (postQuery.error) {
     return (
       <NextError
@@ -43,8 +55,10 @@ const PostViewPage: NextPageWithLayout = () => {
   }
   return (
     <>
+      {/* Header */}
       <h1 className="text-4xl font-extrabold">{data.title}</h1>
-      <div className="flex items-center justify-between">
+      <p className="my-2">{data.subtitle}</p>
+      <div className="flex items-center justify-between my-2">
         <p className="text-gray-400">
           Created {data.createdAt.toLocaleDateString('en-us')}
         </p>
@@ -55,23 +69,27 @@ const PostViewPage: NextPageWithLayout = () => {
           >
             JSON
           </button>
-          <button
-            className={ACTION_BUTTON}
-            onClick={() => setEditing(!editing)}
-          >
-            Edit
-          </button>
-          <button
-            className={DELETE_BUTTON}
-            onClick={() => deletePost.mutate({ id })}
-          >
-            Delete
-          </button>
+          {session?.user?.id === data.userId && (
+            <>
+              <button
+                className={ACTION_BUTTON}
+                onClick={() => setEditing(!editing)}
+              >
+                Edit
+              </button>
+              <button
+                className={DELETE_BUTTON}
+                onClick={() => deletePost.mutate({ id })}
+              >
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
-
+      {/* Post Content */}
       <p>{data.text}</p>
-
+      {/* Edit Form */}
       <div className={`my-10 flex items-center justify-center ${CARD}`}>
         <form
           hidden={!editing}
@@ -85,14 +103,18 @@ const PostViewPage: NextPageWithLayout = () => {
 
             const $text: HTMLInputElement = (e as any).target.elements.text;
             const $title: HTMLInputElement = (e as any).target.elements.title;
+            const $subtitle: HTMLInputElement = (e as any).target.elements
+              .subtitle;
             const data = {
               title: $title.value,
+              subtitle: $subtitle.value,
               text: $text.value,
             };
             try {
               await editPost.mutateAsync({ id, data });
 
               $title.value = '';
+              $subtitle.value = '';
               $text.value = '';
             } catch {}
           }}
@@ -109,6 +131,21 @@ const PostViewPage: NextPageWithLayout = () => {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.currentTarget.value)}
+              disabled={editPost.isLoading}
+            />
+          </div>
+
+          <div className="my-4">
+            <label className="text-2xl font-semibold" htmlFor="subtitle">
+              Subtitle:
+            </label>
+            <br />
+            <input
+              id="subtitle"
+              name="subtitle"
+              type="text"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.currentTarget.value)}
               disabled={editPost.isLoading}
             />
           </div>
@@ -139,7 +176,7 @@ const PostViewPage: NextPageWithLayout = () => {
           )}
         </form>
       </div>
-
+      {/* Displaying JSON data */}
       <div className={CARD} hidden={!rawShown}>
         <code>{JSON.stringify(data, null, 4)}</code>
       </div>

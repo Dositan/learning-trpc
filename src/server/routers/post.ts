@@ -16,9 +16,11 @@ import { prisma } from '~/server/prisma';
 const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   id: true,
   title: true,
+  subtitle: true,
   text: true,
   createdAt: true,
   updatedAt: true,
+  userId: true,
 });
 
 export const postRouter = createRouter()
@@ -76,8 +78,9 @@ export const postRouter = createRouter()
     input: z.object({
       id: z.string().uuid(),
       data: z.object({
-        title: z.string().min(1).max(32).optional(),
-        text: z.string().min(1).optional(),
+        title: z.string().min(1).max(32),
+        subtitle: z.string().min(1).max(255),
+        text: z.string().min(1),
       }),
     }),
     async resolve({ input }) {
