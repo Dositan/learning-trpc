@@ -61,15 +61,19 @@ const IndexPage: NextPageWithLayout = () => {
 
             const $text: HTMLInputElement = (e as any).target.elements.text;
             const $title: HTMLInputElement = (e as any).target.elements.title;
+            const $subtitle: HTMLInputElement = (e as any).target.elements
+              .subtitle;
             const input = {
               title: $title.value,
               text: $text.value,
+              subtitle: $subtitle.value,
               userId: session.user?.id,
             };
             try {
               await addPost.mutateAsync(input);
 
               $title.value = '';
+              $subtitle.value = '';
               $text.value = '';
             } catch {}
           }}
@@ -82,6 +86,17 @@ const IndexPage: NextPageWithLayout = () => {
             <input
               id="title"
               name="title"
+              type="text"
+              disabled={addPost.isLoading}
+            />
+          </div>
+          {/* Subtitle */}
+          <div className="my-4">
+            <label htmlFor="subtitle">Subtitle:</label>
+            <br />
+            <input
+              id="subtitle"
+              name="subtitle"
               type="text"
               disabled={addPost.isLoading}
             />
@@ -106,7 +121,7 @@ const IndexPage: NextPageWithLayout = () => {
       </div>
       <h2 className="text-3xl font-bold my-4">
         Posts
-        {postsQuery.status === 'loading' && '(loading)'}
+        {postsQuery.status === 'loading' && ' (loading)'}
       </h2>
       <hr />
       {postsQuery.data?.map((item) => (

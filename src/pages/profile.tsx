@@ -33,7 +33,7 @@ const Profile: NextPageWithLayout = () => {
       <div className="my-4">
         <h2 className="text-3xl font-bold my-4">
           Your Posts
-          {postsQuery.status === 'loading' && '(loading)'}
+          {postsQuery.status === 'loading' && ' (loading)'}
         </h2>
         <hr />
         {data?.map((item) => (

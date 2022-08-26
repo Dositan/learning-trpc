@@ -16,6 +16,7 @@ async function main() {
     create: {
       id: firstPostId,
       title: 'First Post',
+      subtitle: 'Generated via `$ prisma db seed`',
       text: 'This is an example post generated from `prisma/seed.ts`',
     },
     update: {},

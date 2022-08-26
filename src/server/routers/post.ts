@@ -26,6 +26,7 @@ export const postRouter = createRouter()
     input: z.object({
       id: z.string().uuid().optional(),
       title: z.string().min(1).max(32),
+      subtitle: z.string().min(1).max(255),
       text: z.string().min(1),
       userId: z.string().cuid().optional(),
     }),
