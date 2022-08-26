@@ -11,6 +11,8 @@ const Profile: NextPageWithLayout = () => {
     { id: session?.user?.id as string },
   ]);
 
+  const { data } = postsQuery;
+
   if (!session) {
     return (
       <>
@@ -21,28 +23,31 @@ const Profile: NextPageWithLayout = () => {
   }
   return (
     <>
-      <Image
-        src={session.user?.image || ''}
-        width={100}
-        height={100}
-        alt="User Avatar"
-      />
-      <h1>{session.user?.name}</h1>
-      <Link href="/">
-        <a>
-          <button>Go home</button>
-        </a>
-      </Link>
+      <div className="flex flex-col items-center justify-center">
+        <Image
+          className="rounded-full"
+          src={session.user?.image || ''}
+          width={100}
+          height={100}
+          alt="User Avatar"
+        />
+        <h1 className="text-4xl font-extrabold">{session.user?.name}</h1>
+        <h3 className="text-2xl">{data?.length} posts</h3>
+      </div>
 
-      <h1>Your Posts {postsQuery.status === 'loading' && '(loading)'}</h1>
-      {postsQuery.data?.map((item) => (
-        <article key={item.id}>
-          <h3>{item.title}</h3>
-          <Link href={`/post/${item.id}`}>
-            <a>View more</a>
-          </Link>
-        </article>
-      ))}
+      <div className="border">
+        <h1 className="text-4xl font-extrabold text-center">
+          Your Posts{postsQuery.status === 'loading' && ' (loading)'}
+        </h1>
+        {data?.map((item) => (
+          <article key={item.id}>
+            <h3 className="text-2xl font-semibold">{item.title}</h3>
+            <Link href={`/post/${item.id}`}>
+              <a className="text-teal-400">View more</a>
+            </Link>
+          </article>
+        ))}
+      </div>
     </>
   );
 };

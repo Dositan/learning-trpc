@@ -2,6 +2,7 @@ import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 const IndexPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
@@ -13,6 +14,8 @@ const IndexPage: NextPageWithLayout = () => {
       await utils.invalidateQueries(['post.all']);
     },
   });
+
+  const [adding, setAdding] = useState(false);
 
   // prefetch all posts for instant navigation
   // useEffect(() => {
@@ -31,72 +34,95 @@ const IndexPage: NextPageWithLayout = () => {
   }
   return (
     <>
-      <h1 className="text-4xl font-extrabold">
-        Welcome, {session.user?.name}!
-      </h1>
-      <p>
-        Check <a href="https://trpc.io/docs">the docs</a> whenever you get
-        stuck, or ping <a href="https://twitter.com/alexdotjs">@alexdotjs</a> on
-        Twitter.
-      </p>
+      {/* Header */}
+      <div className="text-center my-4">
+        <h1 className="text-4xl font-extrabold">
+          Welcome, {session.user?.name}!
+        </h1>
+        <p>
+          template by{' '}
+          <a className="text-teal-400" href="https://twitter.com/alexdotjs">
+            @alexdotjs
+          </a>
+          , improved by{' '}
+          <a className="text-teal-400" href="https://twitter.com/dastanozgeldi">
+            @dastanozgeldi
+          </a>
+        </p>
+      </div>
 
-      <h2>
+      {/* Add Post */}
+      <button
+        className="rounded-md px-4 py-2 text-white bg-teal-400 hover:bg-teal-500 hover:duration-500"
+        onClick={() => setAdding(!adding)}
+      >
+        Add Post
+      </button>
+      <div className="flex items-center justify-center bg-gray-100 rounded-xl p-10 my-4">
+        <form
+          hidden={!adding}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            /**
+             * In a real app you probably don't want to use this manually
+             * Checkout React Hook Form - it works great with tRPC
+             * @link https://react-hook-form.com/
+             */
+
+            const $text: HTMLInputElement = (e as any).target.elements.text;
+            const $title: HTMLInputElement = (e as any).target.elements.title;
+            const input = {
+              title: $title.value,
+              text: $text.value,
+            };
+            try {
+              await addPost.mutateAsync(input);
+
+              $title.value = '';
+              $text.value = '';
+            } catch {}
+          }}
+        >
+          <h2 className="text-center text-3xl font-bold mb-2">Add Post</h2>
+          {/* Title */}
+          <div>
+            <label htmlFor="title">Title:</label>
+            <br />
+            <input
+              id="title"
+              name="title"
+              type="text"
+              disabled={addPost.isLoading}
+            />
+          </div>
+          {/* Text */}
+          <div className="my-4">
+            <label htmlFor="text">Text:</label>
+            <br />
+            <textarea id="text" name="text" disabled={addPost.isLoading} />
+          </div>
+          <button
+            className="rounded-md px-4 py-2 text-white bg-teal-400 hover:bg-teal-500 hover:duration-500"
+            type="submit"
+            disabled={addPost.isLoading}
+          >
+            Submit
+          </button>
+          {addPost.error && (
+            <p style={{ color: 'red' }}>{addPost.error.message}</p>
+          )}
+        </form>
+      </div>
+      <h2 className="text-3xl font-bold my-4">
         Posts
         {postsQuery.status === 'loading' && '(loading)'}
       </h2>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          /**
-           * In a real app you probably don't want to use this manually
-           * Checkout React Hook Form - it works great with tRPC
-           * @link https://react-hook-form.com/
-           */
-
-          const $text: HTMLInputElement = (e as any).target.elements.text;
-          const $title: HTMLInputElement = (e as any).target.elements.title;
-          const input = {
-            title: $title.value,
-            text: $text.value,
-          };
-          try {
-            await addPost.mutateAsync(input);
-
-            $title.value = '';
-            $text.value = '';
-          } catch {}
-        }}
-      >
-        <label htmlFor="title">Title:</label>
-        <br />
-        <input
-          id="title"
-          name="title"
-          type="text"
-          disabled={addPost.isLoading}
-        />
-
-        <br />
-        <label htmlFor="text">Text:</label>
-        <br />
-        <textarea id="text" name="text" disabled={addPost.isLoading} />
-        <br />
-        <input type="submit" disabled={addPost.isLoading} />
-        {addPost.error && (
-          <p style={{ color: 'red' }}>{addPost.error.message}</p>
-        )}
-      </form>
       <hr />
-      <Link href="/profile">
-        <a>
-          <button>View my posts</button>
-        </a>
-      </Link>
       {postsQuery.data?.map((item) => (
-        <article key={item.id}>
-          <h3>{item.title}</h3>
+        <article className="my-4" key={item.id}>
+          <h3 className="text-2xl font-semibold">{item.title}</h3>
           <Link href={`/post/${item.id}`}>
-            <a>View more</a>
+            <a className="text-teal-500">View more</a>
           </Link>
         </article>
       ))}
