@@ -73,6 +73,7 @@ const IndexPage: NextPageWithLayout = () => {
             const input = {
               title: $title.value,
               text: $text.value,
+              userId: session.user?.id,
             };
             try {
               await addPost.mutateAsync(input);

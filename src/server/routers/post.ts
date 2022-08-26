@@ -27,6 +27,7 @@ export const postRouter = createRouter()
       id: z.string().uuid().optional(),
       title: z.string().min(1).max(32),
       text: z.string().min(1),
+      userId: z.string().cuid().optional(),
     }),
     async resolve({ input }) {
       const post = await prisma.post.create({
