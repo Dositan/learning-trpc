@@ -31,7 +31,9 @@ const IndexPage: NextPageWithLayout = () => {
   }
   return (
     <>
-      <h1>Welcome, {session.user?.name}!</h1>
+      <h1 className="text-4xl font-extrabold">
+        Welcome, {session.user?.name}!
+      </h1>
       <p>
         Check <a href="https://trpc.io/docs">the docs</a> whenever you get
         stuck, or ping <a href="https://twitter.com/alexdotjs">@alexdotjs</a> on
