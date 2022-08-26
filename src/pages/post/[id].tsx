@@ -71,7 +71,7 @@ const PostViewPage: NextPageWithLayout = () => {
 
       <p>{data.text}</p>
 
-      <div className="my-10 flex items-center justify-center bg-gray-100 rounded-xl p-10">
+      <div className="my-10 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-10">
         <form
           hidden={!editing}
           onSubmit={async (e) => {
@@ -139,9 +139,11 @@ const PostViewPage: NextPageWithLayout = () => {
         </form>
       </div>
 
-      <div className="p-10 bg-gray-100 rounded-xl" hidden={!rawShown}>
-        <h2>Raw data:</h2>
-        <pre>{JSON.stringify(data, null, 4)}</pre>
+      <div
+        className="p-10 bg-gray-100 dark:bg-gray-800 rounded-xl"
+        hidden={!rawShown}
+      >
+        <code>{JSON.stringify(data, null, 4)}</code>
       </div>
     </>
   );

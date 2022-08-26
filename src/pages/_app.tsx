@@ -10,6 +10,7 @@ import { DefaultLayout } from '~/components/DefaultLayout';
 import { AppRouter } from '~/server/routers/_app';
 import { SSRContext } from '~/utils/trpc';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
@@ -26,15 +27,19 @@ const MyApp = (({
   const getLayout =
     Component.getLayout ??
     ((page) => (
-      <SessionProvider session={session}>
-        <DefaultLayout>{page}</DefaultLayout>
-      </SessionProvider>
+      <ThemeProvider attribute="class">
+        <SessionProvider session={session}>
+          <DefaultLayout>{page}</DefaultLayout>
+        </SessionProvider>
+      </ThemeProvider>
     ));
 
   return getLayout(
-    <SessionProvider session={session}>
-      <Component {...pageProps} />
-    </SessionProvider>,
+    <ThemeProvider attribute="class">
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
+    </ThemeProvider>,
   );
 }) as AppType;
 
