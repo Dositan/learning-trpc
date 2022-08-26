@@ -1,9 +1,10 @@
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 import Link from 'next/link';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { Page } from '~/components/Page';
+import SignIn from '~/components/SignIn';
 
 const IndexPage: NextPageWithLayout = () => {
   const { data: session } = useSession();
@@ -25,14 +26,7 @@ const IndexPage: NextPageWithLayout = () => {
   //   }
   // }, [postsQuery.data, utils]);
 
-  if (!session) {
-    return (
-      <>
-        <h1>Not Authorized</h1>
-        <button onClick={() => signIn()}>Sign In</button>
-      </>
-    );
-  }
+  if (!session) return <SignIn />;
   return (
     <Page title="Home">
       {/* Header */}

@@ -47,7 +47,7 @@ const PostViewPage: NextPageWithLayout = () => {
         <p className="text-gray-400">
           Created {data.createdAt.toLocaleDateString('en-us')}
         </p>
-        <div className="flex gap-2">
+        <div className="flex gap-2 my-2">
           <button
             onClick={() => setRawShown(!rawShown)}
             className="py-2 px-4 rounded-md text-gray-100 bg-teal-400 hover:bg-teal-500 duration-500"
@@ -64,7 +64,7 @@ const PostViewPage: NextPageWithLayout = () => {
             className="text-white rounded-md px-4 py-2 bg-red-400 hover:bg-red-500 hover:duration-500"
             onClick={() => deletePost.mutate({ id })}
           >
-            Delete Post
+            Delete
           </button>
         </div>
       </div>

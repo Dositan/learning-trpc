@@ -1,7 +1,8 @@
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Page } from '~/components/Page';
+import SignIn from '~/components/SignIn';
 import { trpc } from '~/utils/trpc';
 import { NextPageWithLayout } from './_app';
 
@@ -14,14 +15,7 @@ const Profile: NextPageWithLayout = () => {
 
   const { data } = postsQuery;
 
-  if (!session) {
-    return (
-      <>
-        <h1>Not Authorized</h1>
-        <button onClick={() => signIn()}>Sign In</button>
-      </>
-    );
-  }
+  if (!session) return <SignIn />;
   return (
     <Page title="Profile">
       <div className="flex flex-col items-center justify-center">
@@ -37,14 +31,16 @@ const Profile: NextPageWithLayout = () => {
       </div>
 
       <div className="my-4">
-        <h1 className="text-4xl font-extrabold text-center">
-          Your Posts{postsQuery.status === 'loading' && ' (loading)'}
-        </h1>
+        <h2 className="text-3xl font-bold my-4">
+          Your Posts
+          {postsQuery.status === 'loading' && '(loading)'}
+        </h2>
+        <hr />
         {data?.map((item) => (
-          <article key={item.id}>
+          <article className="my-4" key={item.id}>
             <h3 className="text-2xl font-semibold">{item.title}</h3>
             <Link href={`/post/${item.id}`}>
-              <a className="text-teal-400">View more</a>
+              <a className="text-teal-500">View more</a>
             </Link>
           </article>
         ))}
