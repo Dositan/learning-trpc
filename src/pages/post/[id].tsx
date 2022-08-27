@@ -18,6 +18,7 @@ const PostViewPage: NextPageWithLayout = () => {
   const [text, setText] = useState<string | undefined>('');
   const [editing, setEditing] = useState(false);
   const [rawShown, setRawShown] = useState(false);
+  const [addingComment, setAddingComment] = useState(false);
   // tRPC
   const utils = trpc.useContext();
   const postQuery = trpc.useQuery(['post.byId', { id }]);
@@ -33,6 +34,18 @@ const PostViewPage: NextPageWithLayout = () => {
     },
   });
   const { data } = postQuery;
+  const commentsQuery = trpc.useQuery([
+    'comment.all',
+    { postId: data?.id || '' },
+  ]);
+  const addComment = trpc.useMutation('comment.add', {
+    async onSuccess() {
+      await utils.invalidateQueries([
+        'comment.all',
+        { postId: data?.id || '' },
+      ]);
+    },
+  });
 
   useEffect(() => {
     setTitle(data?.title);
@@ -177,8 +190,81 @@ const PostViewPage: NextPageWithLayout = () => {
         </form>
       </div>
       {/* Displaying JSON data */}
-      <div className={CARD} hidden={!rawShown}>
+      <div className={`my-10 ${CARD}`} hidden={!rawShown}>
         <code>{JSON.stringify(data, null, 4)}</code>
+      </div>
+      {/* Displaying Comments */}
+      <div>
+        <div className="flex items-center justify-between">
+          <h2 className="text-center text-3xl font-bold mb-2">Comments</h2>
+          <button
+            onClick={() => setAddingComment(!addingComment)}
+            className={ACTION_BUTTON}
+          >
+            Add
+          </button>
+        </div>
+        {/* Add comment form */}
+        {session && (
+          <div className={`rounded-xl my-4 ${CARD}}`}>
+            <form
+              hidden={!addingComment}
+              onSubmit={async (e) => {
+                e.preventDefault();
+
+                const $content: HTMLInputElement = (e as any).target.elements
+                  .content;
+
+                const input = {
+                  content: $content.value,
+                  postId: data.id,
+                  userId: session.user?.id,
+                };
+
+                try {
+                  await addComment.mutateAsync(input);
+
+                  $content.value = '';
+                } catch {}
+              }}
+            >
+              {/* Text */}
+              <div className="my-4">
+                <label htmlFor="content">Content:</label>
+                <br />
+                <textarea
+                  id="content"
+                  name="content"
+                  disabled={addComment.isLoading}
+                />
+              </div>
+              <button
+                className={ACTION_BUTTON}
+                type="submit"
+                disabled={addComment.isLoading}
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        )}
+        {commentsQuery.data?.map((comment) => (
+          <div key={comment.id} className={`${CARD} my-4`}>
+            {/* The user is author */}
+            {session?.user?.id === comment.userId && (
+              <div className="flex items-center gap-2 mb-2">
+                <img
+                  width={32}
+                  height={32}
+                  src={session.user.image || ''}
+                  className="rounded-full bg-gray-300 dark:bg-gray-600"
+                />
+                <h1 className="text-xl font-medium">{session.user.name}</h1>
+              </div>
+            )}
+            <p className="text-xl">{comment.content}</p>
+          </div>
+        ))}
       </div>
     </>
   );

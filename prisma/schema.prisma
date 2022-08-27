@@ -20,10 +20,20 @@ model Post {
 
   // To return `Date`s intact through the API we need to add data transformers
   // https://trpc.io/docs/data-transformers
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  User      User?     @relation(fields: [userId], references: [id])
   userId    String?
+  comments  Comment[]
+}
+
+model Comment {
+  id      String  @id @default(uuid())
+  content String
+  Post    Post?   @relation(fields: [postId], references: [id])
+  postId  String?
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 }
 
 model Account {
@@ -63,6 +73,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
+  comments      Comment[]
 }
 
 model VerificationToken {

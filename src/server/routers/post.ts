@@ -1,7 +1,3 @@
-/**
- *
- * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
- */
 import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -100,8 +96,6 @@ export const postRouter = createRouter()
     async resolve({ input }) {
       const { id } = input;
       await prisma.post.delete({ where: { id } });
-      return {
-        id,
-      };
+      return { id };
     },
   });
