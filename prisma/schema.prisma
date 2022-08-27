@@ -13,27 +13,32 @@ generator client {
 }
 
 model Post {
-  id       String @id @default(uuid())
-  title    String
-  subtitle String @db.VarChar(255)
-  text     String
-
+  id        String    @id @default(uuid())
+  title     String
+  subtitle  String    @db.VarChar(255)
+  text      String
   // To return `Date`s intact through the API we need to add data transformers
   // https://trpc.io/docs/data-transformers
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
+  // Foreign Keys
   User      User?     @relation(fields: [userId], references: [id])
   userId    String?
   comments  Comment[]
 }
 
 model Comment {
-  id      String  @id @default(uuid())
-  content String
-  Post    Post?   @relation(fields: [postId], references: [id])
-  postId  String?
-  User    User?   @relation(fields: [userId], references: [id])
-  userId  String?
+  id        String   @id @default(uuid())
+  content   String
+  isEdited  Boolean  @default(false)
+  // Dates
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  // Foreign keys
+  Post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Account {

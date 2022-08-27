@@ -8,6 +8,9 @@ const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   content: true,
   postId: true,
   userId: true,
+  createdAt: true,
+  updatedAt: true,
+  isEdited: true,
 });
 
 export const commentRouter = createRouter()
@@ -35,10 +38,9 @@ export const commentRouter = createRouter()
       return prisma.comment.findMany({
         select: defaultCommentSelect,
         where: { postId },
-        // TODO: add createdAt field for sorting by date
-        // orderBy: {
-        //   createdAt: 'desc',
-        // },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
     },
   })
@@ -47,12 +49,12 @@ export const commentRouter = createRouter()
       id: z.string().uuid(),
       data: z.object({
         content: z.string().min(1),
+        isEdited: z.boolean().default(true),
       }),
     }),
     async resolve({ input }) {
       const { id, data } = input;
       const comment = await prisma.comment.update({
-        // TODO: add updatedAt field to show that the user updated the comment
         where: { id },
         data,
         select: defaultCommentSelect,

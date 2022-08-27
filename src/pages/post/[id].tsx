@@ -46,6 +46,14 @@ const PostViewPage: NextPageWithLayout = () => {
       ]);
     },
   });
+  const deleteComment = trpc.useMutation('comment.delete', {
+    async onSuccess() {
+      await utils.invalidateQueries([
+        'comment.all',
+        { postId: data?.id || '' },
+      ]);
+    },
+  });
 
   useEffect(() => {
     setTitle(data?.title);
@@ -251,16 +259,28 @@ const PostViewPage: NextPageWithLayout = () => {
         {commentsQuery.data?.map((comment) => (
           <div key={comment.id} className={`${CARD} my-4`}>
             {/* The user is author */}
+            <div className="flex items-center gap-2 mb-2">
+              {session?.user?.id === comment.userId && (
+                <>
+                  <img
+                    width={32}
+                    height={32}
+                    src={session.user.image || ''}
+                    className="rounded-full bg-gray-300 dark:bg-gray-600"
+                  />
+                  <h1 className="font-medium">{session.user.name}</h1>
+                </>
+              )}
+              {comment.isEdited && <span>(edited)</span>}
+              <span>{'• ' + comment.updatedAt.toLocaleTimeString()}</span>
+            </div>
             {session?.user?.id === comment.userId && (
-              <div className="flex items-center gap-2 mb-2">
-                <img
-                  width={32}
-                  height={32}
-                  src={session.user.image || ''}
-                  className="rounded-full bg-gray-300 dark:bg-gray-600"
-                />
-                <h1 className="text-xl font-medium">{session.user.name}</h1>
-              </div>
+              <button
+                className={`${DELETE_BUTTON} text-xs`}
+                onClick={() => deleteComment.mutate({ id: comment.id })}
+              >
+                Delete
+              </button>
             )}
             <p className="text-xl">{comment.content}</p>
           </div>
