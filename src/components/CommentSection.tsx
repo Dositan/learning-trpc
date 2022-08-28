@@ -1,7 +1,7 @@
 import type { Comment as CommentType } from '@prisma/client';
 import type { Session } from 'next-auth';
 import { useState } from 'react';
-import { ACTION_BUTTON, CARD, DELETE_BUTTON } from '~/styles';
+import { ACTION_BUTTON, CARD, DELETE_BUTTON, LABEL, TEXTAREA } from '~/styles';
 import { trpc } from '~/utils/trpc';
 
 type CommentProps = {
@@ -103,13 +103,18 @@ export const AddComment = ({
           } catch {}
         }}
       >
+        {/* Title */}
+        <h2 className="text-center text-3xl font-bold mb-2">Add Post</h2>
         {/* Text */}
         <div className="my-4">
-          <label htmlFor="content">Content:</label>
+          <label className={LABEL} htmlFor="content">
+            Content:
+          </label>
           <br />
           <textarea
             id="content"
             name="content"
+            className={TEXTAREA}
             disabled={addComment.isLoading}
           />
         </div>
@@ -135,7 +140,7 @@ export const Comment = ({ data, session, deleteComment }: CommentProps) => {
             width={32}
             height={32}
             src={data.userImage || '/default-avatar.png'}
-            className="rounded-full bg-gray-300 dark:bg-gray-600"
+            className="rounded-full border border-teal-400"
           />
           <h1 className="font-medium">{data.userName || 'belgısız'}</h1>
           {data.isEdited && <span>(edited)</span>}

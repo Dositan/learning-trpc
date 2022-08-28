@@ -4,7 +4,13 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import CommentSection from '~/components/CommentSection';
 import { NextPageWithLayout } from '~/pages/_app';
-import { ACTION_BUTTON, CARD, DELETE_BUTTON } from '~/styles';
+import {
+  ACTION_BUTTON,
+  CARD,
+  DELETE_BUTTON,
+  INPUT_TEXT,
+  LABEL,
+} from '~/styles';
 import { trpc } from '~/utils/trpc';
 
 const PostViewPage: NextPageWithLayout = () => {
@@ -94,6 +100,7 @@ const PostViewPage: NextPageWithLayout = () => {
       <div className={`my-10 flex items-center justify-center ${CARD}`}>
         <form
           hidden={!editing}
+          className="w-[90%]"
           onSubmit={async (e) => {
             e.preventDefault();
             /**
@@ -122,7 +129,7 @@ const PostViewPage: NextPageWithLayout = () => {
         >
           <h2 className="text-center text-3xl font-bold mb-2">Edit Post</h2>
           <div>
-            <label className="text-2xl font-semibold" htmlFor="title">
+            <label className={LABEL} htmlFor="title">
               Title:
             </label>
             <br />
@@ -130,6 +137,7 @@ const PostViewPage: NextPageWithLayout = () => {
               id="title"
               name="title"
               type="text"
+              className={INPUT_TEXT}
               value={title}
               onChange={(e) => setTitle(e.currentTarget.value)}
               disabled={editPost.isLoading}
@@ -137,7 +145,7 @@ const PostViewPage: NextPageWithLayout = () => {
           </div>
 
           <div className="my-4">
-            <label className="text-2xl font-semibold" htmlFor="subtitle">
+            <label className={LABEL} htmlFor="subtitle">
               Subtitle:
             </label>
             <br />
@@ -145,6 +153,7 @@ const PostViewPage: NextPageWithLayout = () => {
               id="subtitle"
               name="subtitle"
               type="text"
+              className={INPUT_TEXT}
               value={subtitle}
               onChange={(e) => setSubtitle(e.currentTarget.value)}
               disabled={editPost.isLoading}
@@ -152,13 +161,14 @@ const PostViewPage: NextPageWithLayout = () => {
           </div>
 
           <div className="my-4">
-            <label className="text-2xl font-semibold" htmlFor="text">
+            <label className={LABEL} htmlFor="text">
               Text:
             </label>
             <br />
             <textarea
               id="text"
               name="text"
+              className={INPUT_TEXT}
               value={text}
               onChange={(e) => setText(e.currentTarget.value)}
               disabled={editPost.isLoading}

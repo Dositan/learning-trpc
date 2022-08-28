@@ -2,7 +2,7 @@ import { Post } from '@prisma/client';
 import type { Session } from 'next-auth';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ACTION_BUTTON, CARD } from '~/styles';
+import { ACTION_BUTTON, CARD, INPUT_TEXT, TEXTAREA, LABEL } from '~/styles';
 import { trpc } from '~/utils/trpc';
 
 type PostSectionProps = {
@@ -43,12 +43,12 @@ export default function PostSection({
       </h2>
       <hr />
       {postsQuery.data?.map((post: Post) => (
-        <article className="my-4" key={post.id}>
+        <article className="p-1 my-4" key={post.id}>
           <div className="flex items-center gap-2">
             <img
               src={post.userImage || '/default-avatar.png'}
               alt="User Avatar"
-              className="rounded-full"
+              className="rounded-full border border-teal-400"
               width={32}
               height={32}
             />
@@ -78,6 +78,7 @@ export const AddPost = ({
     <div className={`flex items-center justify-center my-4 ${CARD}`}>
       <form
         hidden={!adding}
+        className="w-[90%] mx-auto"
         onSubmit={async (e) => {
           e.preventDefault();
           /**
@@ -110,31 +111,44 @@ export const AddPost = ({
         <h2 className="text-center text-3xl font-bold mb-2">Add Post</h2>
         {/* Title */}
         <div>
-          <label htmlFor="title">Title:</label>
+          <label className={LABEL} htmlFor="title">
+            Title:
+          </label>
           <br />
           <input
             id="title"
             name="title"
             type="text"
+            className={INPUT_TEXT}
             disabled={addPost.isLoading}
           />
         </div>
         {/* Subtitle */}
         <div className="my-4">
-          <label htmlFor="subtitle">Subtitle:</label>
+          <label className={LABEL} htmlFor="subtitle">
+            Subtitle:
+          </label>
           <br />
           <input
             id="subtitle"
             name="subtitle"
             type="text"
+            className={INPUT_TEXT}
             disabled={addPost.isLoading}
           />
         </div>
         {/* Text */}
         <div className="my-4">
-          <label htmlFor="text">Text:</label>
+          <label className={LABEL} htmlFor="text">
+            Text:
+          </label>
           <br />
-          <textarea id="text" name="text" disabled={addPost.isLoading} />
+          <textarea
+            id="text"
+            name="text"
+            className={TEXTAREA}
+            disabled={addPost.isLoading}
+          />
         </div>
         <button
           className={ACTION_BUTTON}
