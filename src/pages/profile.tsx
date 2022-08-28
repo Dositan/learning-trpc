@@ -30,7 +30,7 @@ const Profile: NextPageWithLayout = () => {
         <h3 className="text-2xl">{data?.length} posts</h3>
       </div>
       {/* User Posts */}
-      <PostSection postsQuery={postsQuery} session={session} />
+      <PostSection profilePage postsQuery={postsQuery} session={session} />
     </Page>
   );
 };

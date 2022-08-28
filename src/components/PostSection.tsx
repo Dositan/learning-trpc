@@ -5,16 +5,28 @@ import { useState } from 'react';
 import { ACTION_BUTTON, CARD } from '~/styles';
 import { trpc } from '~/utils/trpc';
 
-type PostSectionProps = { session: Session; postsQuery: any };
+type PostSectionProps = {
+  session: Session;
+  postsQuery: any;
+  profilePage?: boolean;
+};
 
-export default function PostSection({ session, postsQuery }: PostSectionProps) {
+export default function PostSection({
+  session,
+  postsQuery,
+  profilePage = false,
+}: PostSectionProps) {
   const [adding, setAdding] = useState(false);
 
   const utils = trpc.useContext();
   const addPost = trpc.useMutation('post.add', {
     async onSuccess() {
       // refetches posts after a post is added
-      await utils.invalidateQueries(['post.all']);
+      if (profilePage) {
+        await utils.invalidateQueries(['user.posts']);
+      } else {
+        await utils.invalidateQueries(['post.all']);
+      }
     },
   });
 
