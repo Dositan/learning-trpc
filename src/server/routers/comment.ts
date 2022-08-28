@@ -6,6 +6,8 @@ import { prisma } from '~/server/prisma';
 const defaultCommentSelect = Prisma.validator<Prisma.CommentSelect>()({
   id: true,
   content: true,
+  userName: true,
+  userImage: true,
   postId: true,
   userId: true,
   createdAt: true,
@@ -18,6 +20,8 @@ export const commentRouter = createRouter()
     input: z.object({
       id: z.string().uuid().optional(),
       content: z.string().min(1),
+      userName: z.string().optional(),
+      userImage: z.string().optional(),
       postId: z.string().uuid().optional(),
       userId: z.string().cuid().optional(),
     }),

@@ -2,6 +2,7 @@ import { useSession } from 'next-auth/react';
 import NextError from 'next/error';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import CommentSection from '~/components/CommentSection';
 import { NextPageWithLayout } from '~/pages/_app';
 import { ACTION_BUTTON, CARD, DELETE_BUTTON } from '~/styles';
 import { trpc } from '~/utils/trpc';
@@ -18,7 +19,6 @@ const PostViewPage: NextPageWithLayout = () => {
   const [text, setText] = useState<string | undefined>('');
   const [editing, setEditing] = useState(false);
   const [rawShown, setRawShown] = useState(false);
-  const [addingComment, setAddingComment] = useState(false);
   // tRPC
   const utils = trpc.useContext();
   const postQuery = trpc.useQuery(['post.byId', { id }]);
@@ -33,33 +33,13 @@ const PostViewPage: NextPageWithLayout = () => {
       await utils.invalidateQueries(['post.all']);
     },
   });
-  const { data } = postQuery;
-  const commentsQuery = trpc.useQuery([
-    'comment.all',
-    { postId: data?.id || '' },
-  ]);
-  const addComment = trpc.useMutation('comment.add', {
-    async onSuccess() {
-      await utils.invalidateQueries([
-        'comment.all',
-        { postId: data?.id || '' },
-      ]);
-    },
-  });
-  const deleteComment = trpc.useMutation('comment.delete', {
-    async onSuccess() {
-      await utils.invalidateQueries([
-        'comment.all',
-        { postId: data?.id || '' },
-      ]);
-    },
-  });
+  const { data: post } = postQuery;
 
   useEffect(() => {
-    setTitle(data?.title);
-    setSubtitle(data?.subtitle);
-    setText(data?.text);
-  }, [data]);
+    setTitle(post?.title);
+    setSubtitle(post?.subtitle);
+    setText(post?.text);
+  }, [post]);
 
   // failed getting post
   if (postQuery.error) {
@@ -71,17 +51,17 @@ const PostViewPage: NextPageWithLayout = () => {
     );
   }
 
-  if (!data || postQuery.status !== 'success') {
+  if (!post || postQuery.status !== 'success') {
     return <>Loading...</>;
   }
   return (
     <>
       {/* Header */}
-      <h1 className="text-4xl font-extrabold">{data.title}</h1>
-      <p className="my-2">{data.subtitle}</p>
+      <h1 className="text-4xl font-extrabold">{post.title}</h1>
+      <p className="my-2">{post.subtitle}</p>
       <div className="flex items-center justify-between my-2">
         <p className="text-gray-400">
-          Created {data.createdAt.toLocaleDateString('en-us')}
+          Created {post.createdAt.toLocaleDateString('en-us')}
         </p>
         <div className="flex gap-2 my-2">
           <button
@@ -90,7 +70,7 @@ const PostViewPage: NextPageWithLayout = () => {
           >
             JSON
           </button>
-          {session?.user?.id === data.userId && (
+          {session?.user?.id === post.userId && (
             <>
               <button
                 className={ACTION_BUTTON}
@@ -109,7 +89,7 @@ const PostViewPage: NextPageWithLayout = () => {
         </div>
       </div>
       {/* Post Content */}
-      <p>{data.text}</p>
+      <p>{post.text}</p>
       {/* Edit Form */}
       <div className={`my-10 flex items-center justify-center ${CARD}`}>
         <form
@@ -199,93 +179,10 @@ const PostViewPage: NextPageWithLayout = () => {
       </div>
       {/* Displaying JSON data */}
       <div className={`my-10 ${CARD}`} hidden={!rawShown}>
-        <code>{JSON.stringify(data, null, 4)}</code>
+        <code>{JSON.stringify(post, null, 4)}</code>
       </div>
-      {/* Displaying Comments */}
-      <div>
-        <div className="flex items-center justify-between">
-          <h2 className="text-center text-3xl font-bold mb-2">Comments</h2>
-          <button
-            onClick={() => setAddingComment(!addingComment)}
-            className={ACTION_BUTTON}
-          >
-            Add
-          </button>
-        </div>
-        {/* Add comment form */}
-        {session && (
-          <div className={`rounded-xl my-4 ${CARD}}`}>
-            <form
-              hidden={!addingComment}
-              onSubmit={async (e) => {
-                e.preventDefault();
-
-                const $content: HTMLInputElement = (e as any).target.elements
-                  .content;
-
-                const input = {
-                  content: $content.value,
-                  postId: data.id,
-                  userId: session.user?.id,
-                };
-
-                try {
-                  await addComment.mutateAsync(input);
-
-                  $content.value = '';
-                } catch {}
-              }}
-            >
-              {/* Text */}
-              <div className="my-4">
-                <label htmlFor="content">Content:</label>
-                <br />
-                <textarea
-                  id="content"
-                  name="content"
-                  disabled={addComment.isLoading}
-                />
-              </div>
-              <button
-                className={ACTION_BUTTON}
-                type="submit"
-                disabled={addComment.isLoading}
-              >
-                Submit
-              </button>
-            </form>
-          </div>
-        )}
-        {commentsQuery.data?.map((comment) => (
-          <div key={comment.id} className={`${CARD} my-4`}>
-            {/* The user is author */}
-            <div className="flex items-center gap-2 mb-2">
-              {session?.user?.id === comment.userId && (
-                <>
-                  <img
-                    width={32}
-                    height={32}
-                    src={session.user.image || ''}
-                    className="rounded-full bg-gray-300 dark:bg-gray-600"
-                  />
-                  <h1 className="font-medium">{session.user.name}</h1>
-                </>
-              )}
-              {comment.isEdited && <span>(edited)</span>}
-              <span>{'• ' + comment.updatedAt.toLocaleTimeString()}</span>
-            </div>
-            {session?.user?.id === comment.userId && (
-              <button
-                className={`${DELETE_BUTTON} text-xs`}
-                onClick={() => deleteComment.mutate({ id: comment.id })}
-              >
-                Delete
-              </button>
-            )}
-            <p className="text-xl">{comment.content}</p>
-          </div>
-        ))}
-      </div>
+      {/* Comments Section */}
+      <CommentSection session={session} postId={post.id} />
     </>
   );
 };

@@ -14,6 +14,8 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   title: true,
   subtitle: true,
   text: true,
+  userName: true,
+  userImage: true,
   createdAt: true,
   updatedAt: true,
   userId: true,
@@ -26,6 +28,8 @@ export const postRouter = createRouter()
       title: z.string().min(1).max(32),
       subtitle: z.string().min(1).max(255),
       text: z.string().min(1),
+      userName: z.string().optional(),
+      userImage: z.string().optional(),
       userId: z.string().cuid().optional(),
     }),
     async resolve({ input }) {
