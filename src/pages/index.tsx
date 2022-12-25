@@ -1,8 +1,8 @@
 import { NextPageWithLayout } from './_app';
 import { useSession } from 'next-auth/react';
-import { Page } from '~/components/Page';
-import SignIn from '~/components/SignIn';
-import PostSection from '~/components/PostSection';
+import { Page } from '~/components/layout/Page';
+import SignIn from '~/components/common/SignIn';
+import { PostSection } from '~/components/post/PostSection';
 import { trpc } from '~/utils/trpc';
 
 const IndexPage: NextPageWithLayout = () => {

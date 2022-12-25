@@ -6,7 +6,7 @@ import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import { AppType } from 'next/dist/shared/lib/utils';
 import superjson from 'superjson';
-import { DefaultLayout } from '~/components/DefaultLayout';
+import { DefaultLayout } from '~/components/layout/DefaultLayout';
 import { AppRouter } from '~/server/routers/_app';
 import { SSRContext } from '~/utils/trpc';
 import { SessionProvider } from 'next-auth/react';

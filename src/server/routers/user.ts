@@ -10,7 +10,7 @@ export const userRouter = createRouter()
       const { id } = input;
       const posts = await prisma.post.findMany({
         where: { userId: id },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { updatedAt: 'desc' },
       });
       if (!posts) {
         throw new TRPCError({

@@ -3,7 +3,7 @@ import { IoLogoGithub, IoLogoLinkedin, IoLogoTwitter } from 'react-icons/io5';
 const Footer = () => {
   const style = { width: 24, height: 24 };
   return (
-    <footer className="max-w-[60ch] px-4 py-2 mx-auto gap-4 flex-col sm:flex-row flex items-center justify-between">
+    <footer className="my-4 max-w-[60ch] px-4 py-2 mx-auto gap-4 flex-col sm:flex-row flex items-center justify-between">
       <p>made with ❤️ by Dastan Ozgeldi</p>
       <div className="flex gap-4 items-center">
         {/* Twitter */}

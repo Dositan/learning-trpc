@@ -16,6 +16,7 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   text: true,
   userName: true,
   userImage: true,
+  likes: true,
   createdAt: true,
   updatedAt: true,
   userId: true,
@@ -101,5 +102,17 @@ export const postRouter = createRouter()
       const { id } = input;
       await prisma.post.delete({ where: { id } });
       return { id };
+    },
+  })
+  .mutation('like', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input }) {
+      const { id } = input;
+      await prisma.post.update({
+        where: { id },
+        data: { likes: { increment: 1 } },
+      });
     },
   });

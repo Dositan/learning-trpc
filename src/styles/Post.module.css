@@ -1,0 +1,19 @@
+.content h1 {
+  @apply my-3 text-3xl font-extrabold underline underline-offset-8;
+}
+
+.content h2 {
+  @apply my-2 text-2xl font-bold;
+}
+
+.content p {
+  @apply my-2;
+}
+
+.content img {
+  @apply rounded;
+}
+
+.content ul {
+  @apply list-inside list-disc;
+}

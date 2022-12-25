@@ -19,6 +19,7 @@ model Post {
   text      String
   userName  String?
   userImage String?
+  likes     Int       @default(0)
   // To return `Date`s intact through the API we need to add data transformers
   // https://trpc.io/docs/data-transformers
   createdAt DateTime  @default(now())
