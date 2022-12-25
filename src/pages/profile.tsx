@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { Page } from '~/components/Page';
-import PostSection from '~/components/post/PostSection';
+import { Page } from '~/components/layout/Page';
+import { PostSection } from '~/components/post/PostSection';
 import SignIn from '~/components/common/SignIn';
 import { trpc } from '~/utils/trpc';
 import { NextPageWithLayout } from './_app';
