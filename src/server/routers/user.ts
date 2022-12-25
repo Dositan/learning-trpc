@@ -1,16 +1,20 @@
-import { z } from 'zod';
 import { createRouter } from '../createRouter';
 import { prisma } from '~/server/prisma';
 import { TRPCError } from '@trpc/server';
 
 export const userRouter = createRouter()
   .query('posts', {
-    input: z.object({ id: z.string() }),
-    async resolve({ input }) {
-      const { id } = input;
+    async resolve({ ctx }) {
       const posts = await prisma.post.findMany({
-        where: { userId: id },
-        orderBy: { updatedAt: 'desc' },
+        where: {
+          userId: ctx.session?.user?.id,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        include: {
+          user: true,
+        },
       });
       if (!posts) {
         throw new TRPCError({
@@ -22,12 +26,12 @@ export const userRouter = createRouter()
     },
   })
   .query('byComment', {
-    input: z.object({
-      userId: z.string().cuid(),
-    }),
-    async resolve({ input }) {
-      const { userId } = input;
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+    async resolve({ ctx }) {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.session?.user?.id,
+        },
+      });
       return user;
     },
   });

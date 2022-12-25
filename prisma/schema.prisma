@@ -17,15 +17,10 @@ model Post {
   title     String
   subtitle  String    @db.VarChar(255)
   text      String
-  userName  String?
-  userImage String?
   likes     Int       @default(0)
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/data-transformers
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
-  // Foreign Keys
-  User      User?     @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
   userId    String?
   comments  Comment[]
 }
@@ -36,13 +31,11 @@ model Comment {
   isEdited  Boolean  @default(false)
   userName  String?
   userImage String?
-  // Dates
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  // Foreign keys
-  Post      Post?    @relation(fields: [postId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id])
   postId    String?
-  User      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
   userId    String?
 }
 

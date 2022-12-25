@@ -8,10 +8,7 @@ import { NextPageWithLayout } from './_app';
 
 const Profile: NextPageWithLayout = () => {
   const { data: session } = useSession();
-  const postsQuery = trpc.useQuery([
-    'user.posts',
-    { id: session?.user?.id as string },
-  ]);
+  const postsQuery = trpc.useQuery(['user.posts']);
   const { data } = postsQuery;
 
   if (!session) return <SignIn />;

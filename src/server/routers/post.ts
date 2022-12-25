@@ -14,12 +14,11 @@ const defaultPostSelect = Prisma.validator<Prisma.PostSelect>()({
   title: true,
   subtitle: true,
   text: true,
-  userName: true,
-  userImage: true,
   likes: true,
   createdAt: true,
   updatedAt: true,
   userId: true,
+  user: true,
 });
 
 export const postRouter = createRouter()

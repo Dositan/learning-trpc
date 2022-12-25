@@ -1,4 +1,3 @@
-import type { Post } from '@prisma/client';
 import type { Session } from 'next-auth';
 import { useState } from 'react';
 import { ACTION_BUTTON } from '~/styles';
@@ -42,7 +41,7 @@ export const PostSection = ({
         {postsQuery.status === 'loading' && ' (loading)'}
       </h2>
       <hr />
-      {postsQuery.data?.map((post: Post) => (
+      {postsQuery.data?.map((post: any) => (
         <PostItem key={post.id} post={post} />
       ))}
     </>
